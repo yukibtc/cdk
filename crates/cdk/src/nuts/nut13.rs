@@ -5,7 +5,7 @@
 use core::str::FromStr;
 
 use bip39::Mnemonic;
-use bitcoin::bip32::{DerivationPath, ExtendedPrivKey};
+use bitcoin::bip32::{DerivationPath, Xpriv};
 use bitcoin::Network;
 
 use super::nut00::{BlindedMessage, PreMint, PreMintSecrets};
@@ -31,7 +31,7 @@ impl Secret {
         ))?;
 
         let seed: [u8; 64] = mnemonic.to_seed("");
-        let bip32_root_key = ExtendedPrivKey::new_master(Network::Bitcoin, &seed)?;
+        let bip32_root_key = Xpriv::new_master(Network::Bitcoin, &seed)?;
         let derived_xpriv = bip32_root_key.derive_priv(&SECP256K1, &path)?;
 
         Ok(Self::new(hex::encode(
@@ -54,7 +54,7 @@ impl SecretKey {
         ))?;
 
         let seed: [u8; 64] = mnemonic.to_seed("");
-        let bip32_root_key = ExtendedPrivKey::new_master(Network::Bitcoin, &seed)?;
+        let bip32_root_key = Xpriv::new_master(Network::Bitcoin, &seed)?;
         let derived_xpriv = bip32_root_key.derive_priv(&SECP256K1, &path)?;
 
         Ok(Self::from(derived_xpriv.private_key))

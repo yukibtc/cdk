@@ -11,7 +11,7 @@ use bitcoin::hashes::sha256::Hash as Sha256Hash;
 use bitcoin::hashes::Hash;
 use bitcoin::secp256k1::schnorr::Signature;
 use bitcoin::secp256k1::{
-    KeyPair, Message, Parity, PublicKey as NormalizedPublicKey, XOnlyPublicKey,
+    Keypair, Message, Parity, PublicKey as NormalizedPublicKey, XOnlyPublicKey,
 };
 use serde::de::Error as DeserializerError;
 use serde::ser::SerializeSeq;
@@ -697,7 +697,7 @@ impl VerifyingKey {
 
     pub fn verify(&self, msg: &[u8], sig: &Signature) -> Result<(), Error> {
         let hash: Sha256Hash = Sha256Hash::hash(msg);
-        let msg = Message::from_slice(hash.as_ref())?;
+        let msg = Message::from_digest_slice(hash.as_ref())?;
         SECP256K1.verify_schnorr(sig, &msg, &self.0)?;
         Ok(())
     }
@@ -751,7 +751,7 @@ impl TryFrom<&PublicKey> for VerifyingKey {
 #[derive(Clone, Serialize, Deserialize)]
 pub struct SigningKey {
     secret_key: SecretKey,
-    key_pair: KeyPair,
+    key_pair: Keypair,
 }
 
 impl Deref for SigningKey {
@@ -766,13 +766,13 @@ impl SigningKey {
     #[inline]
     pub fn new(secret_key: SecretKey) -> Self {
         Self {
-            key_pair: KeyPair::from_secret_key(&SECP256K1, &secret_key),
+            key_pair: Keypair::from_secret_key(&SECP256K1, &secret_key),
             secret_key,
         }
     }
     pub fn sign(&self, msg: &[u8]) -> Result<Signature, Error> {
         let hash: Sha256Hash = Sha256Hash::hash(msg);
-        let msg = Message::from_slice(hash.as_ref())?;
+        let msg = Message::from_digest_slice(hash.as_ref())?;
         Ok(SECP256K1.sign_schnorr(&msg, &self.key_pair))
     }
 
