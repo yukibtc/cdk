@@ -278,7 +278,7 @@ impl MintKeySet {
     ) -> Self {
         let mut map = BTreeMap::new();
         for i in 0..max_order {
-            let amount = Amount::from(2_u64.pow(i as u32));
+            let amount = Amount::from_sat(2_u64.pow(i as u32));
             let secret_key = xpriv
                 .derive_priv(
                     secp,

@@ -16,6 +16,7 @@ use url::Url;
 
 use super::nut10;
 use super::nut11::SpendingConditions;
+use crate::amount::{Amount, SplitAmount};
 use crate::dhke::blind_message;
 use crate::nuts::nut01::{PublicKey, SecretKey};
 use crate::nuts::nut11::{serde_p2pk_witness, P2PKWitness};
@@ -24,7 +25,6 @@ use crate::nuts::nut14::{serde_htlc_witness, HTLCWitness};
 use crate::nuts::{Id, ProofDleq};
 use crate::secret::Secret;
 use crate::url::UncheckedUrl;
-use crate::Amount;
 
 /// List of [Proof]
 pub type Proofs = Vec<Proof>;
@@ -391,7 +391,7 @@ impl PreMintSecrets {
 
     /// Blank Outputs used for NUT-08 change
     pub fn blank(keyset_id: Id, fee_reserve: Amount) -> Result<Self, Error> {
-        let count = ((u64::from(fee_reserve) as f64).log2().ceil() as u64).max(1);
+        let count = ((fee_reserve.to_sat() as f64).log2().ceil() as u64).max(1);
 
         let mut output = Vec::with_capacity(count as usize);
 
@@ -547,7 +547,7 @@ impl Token {
             }
         }
 
-        (amount.into(), self.token[0].mint.to_string())
+        (amount.to_sat(), self.token[0].mint.to_string())
     }
 }
 
@@ -639,14 +639,17 @@ mod tests {
         // TODO: Need to update id to new type in proof
         let b = PreMintSecrets::blank(
             Id::from_str("009a1f293253e41e").unwrap(),
-            Amount::from(1000),
+            Amount::from_sat(1000),
         )
         .unwrap();
         assert_eq!(b.len(), 10);
 
         // TODO: Need to update id to new type in proof
-        let b = PreMintSecrets::blank(Id::from_str("009a1f293253e41e").unwrap(), Amount::from(1))
-            .unwrap();
+        let b = PreMintSecrets::blank(
+            Id::from_str("009a1f293253e41e").unwrap(),
+            Amount::from_sat(1),
+        )
+        .unwrap();
         assert_eq!(b.len(), 1);
     }
 

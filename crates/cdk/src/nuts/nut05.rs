@@ -36,8 +36,8 @@ impl From<MeltQuote> for MeltQuoteBolt11Response {
     fn from(melt_quote: MeltQuote) -> MeltQuoteBolt11Response {
         MeltQuoteBolt11Response {
             quote: melt_quote.id,
-            amount: u64::from(melt_quote.amount),
-            fee_reserve: u64::from(melt_quote.fee_reserve),
+            amount: melt_quote.amount.to_sat(),
+            fee_reserve: melt_quote.fee_reserve.to_sat(),
             paid: melt_quote.paid,
             expiry: melt_quote.expiry,
         }

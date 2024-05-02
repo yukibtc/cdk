@@ -10,13 +10,13 @@ use tokio::sync::RwLock;
 use tracing::{debug, error, info};
 
 use self::nut11::enforce_sig_flag;
+use crate::amount::{Amount, SplitAmount};
 use crate::cdk_database::{self, MintDatabase};
 use crate::dhke::{hash_to_curve, sign_message, verify_message};
 use crate::error::ErrorResponse;
 use crate::nuts::*;
 use crate::types::{MeltQuote, MintQuote};
 use crate::util::unix_time;
-use crate::Amount;
 
 #[derive(Debug, Error)]
 pub enum Error {
@@ -715,8 +715,8 @@ impl Mint {
             quote: quote.id,
             paid: quote.paid,
             expiry: quote.expiry,
-            amount: u64::from(quote.amount),
-            fee_reserve: u64::from(quote.fee_reserve),
+            amount: quote.amount.to_sat(),
+            fee_reserve: quote.fee_reserve.to_sat(),
         })
     }
 

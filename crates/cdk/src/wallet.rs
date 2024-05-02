@@ -760,10 +760,10 @@ impl Wallet {
 
         let quote = MeltQuote {
             id: quote_res.quote,
-            amount: quote_res.amount.into(),
+            amount: Amount::from_sat(quote_res.amount),
             request,
             unit,
-            fee_reserve: quote_res.fee_reserve.into(),
+            fee_reserve: Amount::from_sat(quote_res.fee_reserve),
             paid: quote_res.paid,
             expiry: quote_res.expiry,
         };

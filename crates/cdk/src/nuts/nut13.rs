@@ -11,11 +11,12 @@ use bitcoin::Network;
 use super::nut00::{BlindedMessage, PreMint, PreMintSecrets};
 use super::nut01::SecretKey;
 use super::nut02::Id;
+use crate::amount::{Amount, SplitAmount};
 use crate::dhke::blind_message;
 use crate::error::Error;
 use crate::secret::Secret;
 use crate::util::hex;
-use crate::{Amount, SECP256K1};
+use crate::SECP256K1;
 
 impl Secret {
     pub fn from_seed(mnemonic: &Mnemonic, keyset_id: Id, counter: u64) -> Result<Self, Error> {
